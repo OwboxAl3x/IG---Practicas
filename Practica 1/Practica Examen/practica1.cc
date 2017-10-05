@@ -105,20 +105,27 @@ void draw_objects()
 
 	switch(tecla){
 		case 'p': 
-			if(figura=='1') cubito.draw_puntos(0.0, 0.0, 0.0, 3.0); 
-			else piramidita.draw_puntos(0.0, 0.0, 0.0, 3.0);
+			if(figura=='2'){ 
+				cubito.draw_puntos(0.0, 0.0, 0.0, 3.0); 
+			}else{
+				piramidita.draw_puntos(0.0, 0.0, 0.0, 3.0);
+			}
 			break;
 		case 'l': 
-			if(figura=='1') cubito.draw_aristas(0.0, 0.0, 0.0, 1.0); 
+			if(figura=='2') cubito.draw_aristas(0.0, 0.0, 0.0, 1.0); 
 			else piramidita.draw_aristas(0.0, 0.0, 0.0, 1.0);
 			break;
 		case 'f': 
-			if(figura=='1') cubito.draw_solido(1.0, 0.0, 0.0);
+			if(figura=='2') cubito.draw_solido(1.0, 0.0, 0.0);
 			else piramidita.draw_solido(1.0, 0.0, 0.0);
 			break;
 		case 'c': 
-			if(figura=='1') cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+			if(figura=='2') cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 			else piramidita.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+			break;
+		case 'o': 
+			cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
+			cubito.draw_circulo(1.0, 32.0, GL_FILL);
 			break;
 	}
 
@@ -178,6 +185,7 @@ else if (toupper(Tecla1)=='P') tecla = 'p';
 else if (toupper(Tecla1)=='L') tecla = 'l';
 else if (toupper(Tecla1)=='F') tecla = 'f';
 else if (toupper(Tecla1)=='C') tecla = 'c';
+else if (toupper(Tecla1)=='O') tecla = 'o';
 
 glutPostRedisplay();
 }
