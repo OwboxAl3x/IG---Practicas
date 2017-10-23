@@ -12,11 +12,11 @@
 _puntos3D::_puntos3D(){}
 
 void _puntos3D::draw_puntos(float r, float g, float b, int grosor){
-	
+
 	glPointSize(grosor);
 	glColor3f(r,g,b);
 	glBegin(GL_POINTS);
-	
+
 	for(int i=0; i<vertices.size(); i++){
 
 		glVertex3f(vertices[i].x, vertices[i].y, vertices[i].z);
@@ -39,7 +39,7 @@ void _triangulos3D::draw_aristas(float r, float g, float b, int grosor){
 	glPointSize(grosor);
 	glColor3f(r,g,b);
 	glBegin(GL_TRIANGLES);
-	
+
 	for(int i=0; i<caras.size(); i++){
 
 		glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
@@ -57,7 +57,7 @@ void _triangulos3D::draw_solido(float r, float g, float b){
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 	glColor3f(r,g,b);
 	glBegin(GL_TRIANGLES);
-	
+
 	for(int i=0; i<caras.size(); i++){
 
 		glVertex3fv((GLfloat *) &vertices[caras[i]._0]);
@@ -74,7 +74,7 @@ void _triangulos3D::draw_solido_ajedrez(float r1, float g1, float b1, float r2, 
 
 	glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 	glBegin(GL_TRIANGLES);
-	
+
 	for(int i=0; i<caras.size(); i++){
 
 		if(i%2==0){
@@ -134,7 +134,7 @@ _cubo::_cubo(float tam){
 	c9.x = 1; c9.y = 2; c9.z = 7;
 	c10.x = 3; c10.y = 5; c10.z = 4;
 	c11.x = 3; c11.y = 5; c11.z = 0;
-	
+
 	caras.push_back(c0);
 	caras.push_back(c1);
 	caras.push_back(c2);
@@ -189,5 +189,47 @@ _piramide::_piramide(float tam, float al){
 	caras.push_back(c1);
 	caras.push_back(c2);
 	caras.push_back(c3);
+
+}
+
+
+//*************************************************************************
+// clase PLY
+//*************************************************************************
+
+_modeloPly::_modeloPly(string nombre){
+	cargarPly(nombre);
+}
+
+void _modeloPly::cargarPly (string nombre){
+
+	_file_ply File_ply;
+
+	vector<_vertex3f> puntos;
+	vector<_vertex3i> triangulos;
+	_vertex3f v;
+	_vertex3i c;
+
+	int i;
+
+	File_ply.open(nombre);
+	File_ply.read(puntos, triangulos);
+
+	for (i = 0; i < puntos.size(); i++){
+		v.x = puntos[i].x;
+		v.y = puntos[i].y;
+		v.z = puntos[i].z;
+		vertices.push_back(v);
+	}
+
+	for (i = 0; i < triangulos.size(); i++){
+		c.x = triangulos[i].x;
+		c.y = triangulos[i].y;
+		c.z = triangulos[i].z;
+
+		caras.push_back(c);
+	}
+
+	File_ply.close();
 
 }

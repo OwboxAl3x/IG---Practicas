@@ -2,10 +2,15 @@
 // Práctica 1 usando objetos
 //**************************************************************************
 
-#include <vector>
+#ifdef __APPLE__
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
+#include <vector>
 #include "vertex.h"
 #include <stdlib.h>
+#include "file_ply_stl.h"
 
 using namespace std;
 
@@ -19,7 +24,7 @@ class _puntos3D
 {
 	public:
 
-	  
+
 			_puntos3D();
 		void 	draw_puntos(float r, float g, float b, int grosor);
 
@@ -71,29 +76,14 @@ class _piramide: public _triangulos3D
 
 
 //*************************************************************************
-// Clase PLY
+// clase PLY
 //*************************************************************************
-class modeloPly: public _triangulos3D
+class _modeloPly: public _triangulos3D
 {
 
 	public:
 
-		modeloPly();
-		void cargarModelo (char* filename);
+		_modeloPly(string nombre);
+		void cargarPly (string nombre);
 
 };
-
-
-class modeloPlyRevolucion: public modeloPly
-{
-	private:
-		_vertex3f rotarPunto(_vertex3f p, float ang);
-		_vertex3f generarPuntoTapa(vector <_vertex3f> &p,int var);
-
-	public:
-		modeloPlyRevolucion();
-		void generarModelo(int etapas,vector <_vertex3f> perfil);
-
-
-};
-

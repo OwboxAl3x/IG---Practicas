@@ -6,16 +6,17 @@ TARGETS= practica2
 
 # banderas para el compilador (C y C++). Se indican los directorios donde se puenden
 # encontrar ficheros para incluir mediante la opcion -I
-# la opcion -g sirve para permitir la depuración
+# la opcion -g sirve para permitir la depuracin
 #
-CFLAGS=    -g -DXWINDOWS -DSHM -I/usr/include -I.
-CXXFLAGS=  -g -DXWINDOWS -DSHM -I/usr/include -I.
+CFLAGS=    -g -I/usr/include -I.
+CXXFLAGS=  -g -I/usr/include -I.
 
 # banderas pra el enlazador
 # Se indica directorios donde encontrar las funciontecas con -L. Usando -l seguido del
 # nombre se indica la funcionteca que se desea enlazar.
 #
-LDFLAGS=  -lGLU -lGL -lglut
+#LDFLAGS=  -lGLU -lGL -lglut
+LDFLAGS= -framework GLUT -framework OpenGL -framework Cocoa
 
 # definicion del compilador
 #
@@ -27,8 +28,8 @@ default : $(TARGETS)
 
 # regla de ejecucion
 #
-$(TARGETS) : objetos.o practica2.o
-	$(CC) -o $@ $(CXXFLAGS) objetos.o practica2.o $(LDFLAGS)
+$(TARGETS) : objetos.o file_ply_stl.o practica2.o
+	$(CC) -o $@ $(CXXFLAGS) objetos.o file_ply_stl.o practica2.o $(LDFLAGS)
 
 #
 #
@@ -56,4 +57,3 @@ tgz:
 	rm *~
 	rm -f $(TARGETS)
 	tar -zcvf $(TARGETS).tgz *
-
