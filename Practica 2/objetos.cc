@@ -197,9 +197,7 @@ _piramide::_piramide(float tam, float al){
 // clase PLY
 //*************************************************************************
 
-_modeloPly::_modeloPly(string nombre){
-	cargarPly(nombre);
-}
+_modeloPly::_modeloPly(){}
 
 void _modeloPly::cargarPly (string nombre){
 
@@ -231,5 +229,154 @@ void _modeloPly::cargarPly (string nombre){
 	}
 
 	File_ply.close();
+
+}
+
+
+//*************************************************************************
+// clase revolucion
+//*************************************************************************
+
+_modeloPlyRevolucion::_modeloPlyRevolucion(){}
+
+_modeloPlyRevolucion::_modeloPlyRevolucion(vector<_vertex3f> perfil, int lados){
+
+	bool tapaArriba = false;
+	bool tapaAbajo = false;
+	_vertex3f verticeArriba;
+	_vertex3f verticeAbajo;
+
+	if(perfil[lados].y == 0){
+
+		cout << "tapaArriba true" << endl;
+		tapaArriba = true;
+		verticeArriba = perfil[lados];
+		perfil.erase(perfil.begin());
+
+	}else{
+
+		cout << "tapaArriba false" << endl;
+		tapaArriba = false;
+		verticeArriba.x = perfil[lados].x;
+		verticeArriba.y = 0;
+		verticeArriba.z = perfil[lados].z;
+
+	}
+
+	if(perfil.back().y == 0) {
+
+		cout << "tapaAbajo true" << endl;
+		tapaAbajo = true;
+		verticeAbajo = perfil.back();
+		perfil.erase(perfil.end());
+
+	}else{
+
+		cout << "tapaAbajo false" << endl;
+		tapaAbajo = false;
+		verticeAbajo.x = perfil[lados].x;
+		verticeAbajo.y = 0;
+		verticeAbajo.z = perfil[lados].z;
+
+	}
+
+	revolution(perfil, lados);
+
+	if(tapaArriba){
+
+		vertices.push_back(verticeArriba);
+
+		for(int i = 0; i < vertices.size() - perfil.size(); i = i + perfil.size()){
+
+			_vertex3i c;
+
+			c.x = i + perfil.size();
+			c.y = i;
+			c.z = vertices.size() - 1;
+
+			caras.push_back(c);
+
+		}
+
+	}
+
+	if(tapaAbajo){
+
+		vertices.push_back(verticeAbajo);
+
+		for(int i = perfil.size() - 1; i < vertices.size() - perfil.size(); i = i + perfil.size()){
+
+			_vertex3i c;
+
+			c.x = i + perfil.size();
+			c.y = i;
+			c.z = vertices.size() - 1;
+
+			caras.push_back(c);
+
+		}
+
+	}
+
+}
+
+void _modeloPlyRevolucion::revolution(vector<_vertex3f> perfil, int lados){
+
+	vertices.clear();
+	caras.clear();
+	vertices = perfil; //Metemos en vertices lo leidos desde peon.ply
+
+	double angulo = pasoRadianes(360.0 / lados);
+
+	vertices.resize(perfil.size() * (lados + 1));
+	int k = perfil.size();
+
+	for(int i = 0; i < lados; i++){
+
+		perfil[0] = rotar(perfil[0], angulo);
+		vertices[k++] = perfil[0];
+
+		for(int j = 1; j < perfil.size(); j++){
+
+			perfil[j] = rotar(perfil[j], angulo);
+			vertices[k] = perfil[j];
+
+			_vertex3i c;
+
+			c.x = k;
+			c.y = k - perfil.size();
+			c.z = k - perfil.size() - 1;
+
+			caras.push_back(c);
+
+			c.x = k;
+			c.y = k - perfil.size() - 1;
+			c.z = k - 1;
+
+			caras.push_back(c);
+
+			k++;
+
+		}
+
+	}
+
+}
+
+double _modeloPlyRevolucion::pasoRadianes(double grados){
+
+	return grados * 3.14159 / 180;
+
+}
+
+_vertex3f _modeloPlyRevolucion::rotar(_vertex3f puntoAnt, float angulo){
+
+	//Funcion para rotar cada punto segun el anterior
+	_vertex3f puntoSig;
+	puntoSig.x = cos(angulo)*puntoAnt.x + sin(angulo)*puntoAnt.z;
+	puntoSig.y = puntoAnt.y;
+	puntoSig.z = -sin(angulo)*puntoAnt.x + cos(angulo)*puntoAnt.z;
+
+	return puntoSig;
 
 }

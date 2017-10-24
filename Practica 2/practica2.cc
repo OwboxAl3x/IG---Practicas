@@ -32,7 +32,8 @@ unsigned char tecla='l', figura = '2';
 _cubo cubito = _cubo(5.0);
 _piramide piramidita = _piramide(5.0, 7.5);
 
-_modeloPly objetito = _modeloPly("PLYs/beethoven.ply");
+_modeloPly objetito;
+_modeloPlyRevolucion objetitoRev = _modeloPlyRevolucion();
 
 //**************************************************************************
 //
@@ -109,22 +110,26 @@ void draw_objects()
 		case 'p':
 			if(figura=='1') cubito.draw_puntos(0.0, 0.0, 0.0, 3.0);
 			else if(figura=='2') piramidita.draw_puntos(0.0, 0.0, 0.0, 3.0);
-			else if(figura=='3') objetito.draw_puntos(1.0,0,0,4);
+			else if(figura=='3') objetito.draw_puntos(1.0,0.0,0.0,4.0);
+			else if(figura=='4') objetitoRev.draw_puntos(1.0,0,0,4);
 			break;
 		case 'l':
 			if(figura=='1') cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
 			else if(figura=='2') piramidita.draw_aristas(0.0, 0.0, 0.0, 1.0);
-			else if(figura=='3') objetito.draw_aristas(1.0,0,0,1);
+			else if(figura=='3') objetito.draw_aristas(1.0,0.0,0.0,1.0);
+			else if(figura=='4') objetitoRev.draw_aristas(1.0,0.0,0.0,1.0);
 			break;
 		case 'f':
 			if(figura=='1') cubito.draw_solido(1.0, 0.0, 0.0);
 			else if(figura=='2') piramidita.draw_solido(1.0, 0.0, 0.0);
-			else if(figura=='3') objetito.draw_solido(1.0,0,0);
+			else if(figura=='3') objetito.draw_solido(0.0,1.0,0.0);
+			else if(figura=='4') objetitoRev.draw_solido(0.0,1.0,0.0);
 			break;
 		case 'c':
 			if(figura=='1') cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 			else if(figura=='2')piramidita.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-			else if(figura=='3') objetito.draw_solido_ajedrez(1.0,0,0,0,1.0,0);
+			else if(figura=='3') objetito.draw_solido_ajedrez(1.0,0.0,0.0,0.0,1.0,0.0);
+			else if(figura=='4') objetitoRev.draw_solido_ajedrez(1.0,0.0,0.0,0.0,1.0,0.0);
 			break;
 	}
 
@@ -181,6 +186,7 @@ else if (toupper(Tecla1)=='+') Observer_distance/=1.2;
 else if (toupper(Tecla1)=='1') figura = '1';
 else if (toupper(Tecla1)=='2') figura = '2';
 else if (toupper(Tecla1)=='3') figura = '3';
+else if (toupper(Tecla1)=='4') figura = '4';
 else if (toupper(Tecla1)=='P') tecla = 'p';
 else if (toupper(Tecla1)=='L') tecla = 'l';
 else if (toupper(Tecla1)=='F') tecla = 'f';
@@ -242,6 +248,18 @@ glEnable(GL_DEPTH_TEST);
 change_projection();
 //
 glViewport(0,0,UI_window_width,UI_window_height);
+
+_file_ply File_ply;
+
+vector<_vertex3f> puntos;
+vector<_vertex3i> triangulos;
+
+File_ply.open("PLYs/peon.ply");
+File_ply.read(puntos, triangulos);
+File_ply.close();
+
+objetitoRev = _modeloPlyRevolucion(puntos, 12);
+
 }
 
 
@@ -288,7 +306,7 @@ glutKeyboardFunc(normal_keys);
 // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
 glutSpecialFunc(special_keys);
 
-//objetito.cargarPly("PLYs/beethoven.ply");
+objetito.cargarPly("PLYs/beethoven.ply");
 
 // funcion de inicialización
 initialize();

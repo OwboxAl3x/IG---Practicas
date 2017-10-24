@@ -83,7 +83,21 @@ class _modeloPly: public _triangulos3D
 
 	public:
 
-		_modeloPly(string nombre);
+		_modeloPly();
 		void cargarPly (string nombre);
+
+};
+
+class _modeloPlyRevolucion: public _modeloPly
+{
+
+    public:
+
+        _modeloPlyRevolucion();
+				_modeloPlyRevolucion(vector<_vertex3f> perfil, int lados);
+        void revolution(vector<_vertex3f> perfil, int lados);
+
+        double pasoRadianes(double grados);
+        _vertex3f rotar(_vertex3f y, float angulo);
 
 };
