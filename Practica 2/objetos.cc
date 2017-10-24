@@ -246,45 +246,45 @@ _modeloPlyRevolucion::_modeloPlyRevolucion(vector<_vertex3f> perfil, int lados){
 	_vertex3f verticeArriba;
 	_vertex3f verticeAbajo;
 
-	if(perfil[lados].y == 0){
+	cout << "perfil.back().x = " << perfil.back().x << endl;
 
-		cout << "tapaArriba true" << endl;
-		tapaArriba = true;
-		verticeArriba = perfil[lados];
-		perfil.erase(perfil.begin());
-
-	}else{
+	if(perfil.back().x == 0){
 
 		cout << "tapaArriba false" << endl;
 		tapaArriba = false;
-		verticeArriba.x = perfil[lados].x;
-		verticeArriba.y = 0;
-		verticeArriba.z = perfil[lados].z;
-
-	}
-
-	if(perfil.back().y == 0) {
-
-		cout << "tapaAbajo true" << endl;
-		tapaAbajo = true;
-		verticeAbajo = perfil.back();
-		perfil.erase(perfil.end());
 
 	}else{
 
+		cout << "tapaArriba true" << endl;
+		tapaArriba = true;
+		verticeArriba.x = 0;
+		verticeArriba.y = perfil.back().y;
+		verticeArriba.z = 0;
+
+	}
+
+	cout << "perfil[0].x = " << perfil[0].x << endl;
+
+	if(perfil[0].x == 0) {
+
 		cout << "tapaAbajo false" << endl;
 		tapaAbajo = false;
-		verticeAbajo.x = perfil[lados].x;
-		verticeAbajo.y = 0;
-		verticeAbajo.z = perfil[lados].z;
+
+	}else{
+
+		cout << "tapaAbajo true" << endl;
+		tapaAbajo = true;
+		verticeAbajo.x = 0;
+		verticeAbajo.y = perfil[0].y;
+		verticeAbajo.z = 0;
 
 	}
 
 	revolution(perfil, lados);
 
-	if(tapaArriba){
+	if(tapaAbajo){
 
-		vertices.push_back(verticeArriba);
+		vertices.push_back(verticeAbajo);
 
 		for(int i = 0; i < vertices.size() - perfil.size(); i = i + perfil.size()){
 
@@ -300,9 +300,9 @@ _modeloPlyRevolucion::_modeloPlyRevolucion(vector<_vertex3f> perfil, int lados){
 
 	}
 
-	if(tapaAbajo){
+	if(tapaArriba){
 
-		vertices.push_back(verticeAbajo);
+		vertices.push_back(verticeArriba);
 
 		for(int i = perfil.size() - 1; i < vertices.size() - perfil.size(); i = i + perfil.size()){
 
