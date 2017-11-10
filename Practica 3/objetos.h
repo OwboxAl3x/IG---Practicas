@@ -57,7 +57,7 @@ class _cubo: public _triangulos3D
 {
 	public:
 
-		_cubo(float tam=0.5);
+		_cubo(float tam=1);
 
 };
 
@@ -99,5 +99,24 @@ class _modeloPlyRevolucion: public _modeloPly
 
         double pasoRadianes(double grados);
         _vertex3f rotar(_vertex3f y, float angulo);
+
+};
+
+
+//*************************************************************************
+// clase Selfie
+//*************************************************************************
+
+class _paloSelfie: public _triangulos3D
+{
+
+	private:
+
+		_cubo cubito;
+
+	public:
+
+		_paloSelfie();
+		void pintar(float e, float g, float r, int modo);
 
 };

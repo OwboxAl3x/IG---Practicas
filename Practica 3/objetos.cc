@@ -4,6 +4,7 @@
 
 #include "objetos.h"
 #include <math.h>
+#include <GLUT/glut.h>
 
 //*************************************************************************
 // clase punto
@@ -102,14 +103,14 @@ _cubo::_cubo(float tam){
 
 	_vertex3f v0, v1, v2, v3, v4, v5, v6, v7;
 
-	v0.x = 0.0; v0.y = 0.0; v0.z = 0.0;
-	v1.x = 0.0; v1.y = tam; v1.z = 0.0;
-	v2.x = 0.0; v2.y = tam; v2.z = tam;
-	v3.x = 0.0; v3.y = 0.0; v3.z = tam;
-	v4.x = tam; v4.y = 0.0; v4.z = tam;
-	v5.x = tam; v5.y = 0.0; v5.z = 0.0;
-	v6.x = tam; v6.y = tam; v6.z = 0.0;
-	v7.x = tam; v7.y = tam; v7.z = tam;
+	v0.x = -0.5; v0.y = -0.5; v0.z = tam/2;
+	v1.x = -0.5; v1.y = tam/2; v1.z = tam/2;
+	v2.x = -0.5; v2.y = tam/2; v2.z = -0.5;
+	v3.x = -0.5; v3.y = -0.5; v3.z = -0.5;
+	v4.x = tam/2; v4.y = -0.5; v4.z = -0.5;
+	v5.x = tam/2; v5.y = -0.5; v5.z = tam/2;
+	v6.x = tam/2; v6.y = tam/2; v6.z = tam/2;
+	v7.x = tam/2; v7.y = tam/2; v7.z = -0.5;
 
 	vertices.push_back(v0);
 	vertices.push_back(v1);
@@ -246,16 +247,12 @@ _modeloPlyRevolucion::_modeloPlyRevolucion(vector<_vertex3f> perfil, int lados){
 	_vertex3f verticeArriba;
 	_vertex3f verticeAbajo;
 
-	cout << "perfil.back().x = " << perfil.back().x << endl;
-
 	if(perfil.back().x == 0){
 
-		cout << "tapaArriba false" << endl;
 		tapaArriba = false;
 
 	}else{
 
-		cout << "tapaArriba true" << endl;
 		tapaArriba = true;
 		verticeArriba.x = 0;
 		verticeArriba.y = perfil.back().y;
@@ -263,16 +260,12 @@ _modeloPlyRevolucion::_modeloPlyRevolucion(vector<_vertex3f> perfil, int lados){
 
 	}
 
-	cout << "perfil[0].x = " << perfil[0].x << endl;
-
 	if(perfil[0].x == 0) {
 
-		cout << "tapaAbajo false" << endl;
 		tapaAbajo = false;
 
 	}else{
 
-		cout << "tapaAbajo true" << endl;
 		tapaAbajo = true;
 		verticeAbajo.x = 0;
 		verticeAbajo.y = perfil[0].y;
@@ -378,5 +371,113 @@ _vertex3f _modeloPlyRevolucion::rotar(_vertex3f puntoAnt, float angulo){
 	puntoSig.z = -sin(angulo)*puntoAnt.x + cos(angulo)*puntoAnt.z;
 
 	return puntoSig;
+
+}
+
+
+//*************************************************************************
+// clase Selfie
+//*************************************************************************
+
+_paloSelfie::_paloSelfie(){
+
+
+}
+
+void _paloSelfie::pintar(float e, float g, float r, int modo){
+
+	//GLUquadricObj *obj = gluNewQuadric();
+	//glutSolidSphere(0.5, 20, 20);
+	//gluCylinder(obj, 1.0, 1, 3, 30, 30);
+
+	glPushMatrix();
+
+		glPushMatrix();
+
+			glTranslatef(0.0, 2.0, 0.0);
+
+			glRotatef(g, 0.0, 1.0, 0.0);
+
+			glTranslatef(0.0, 0.5*e, 0.0);
+
+			glPushMatrix();
+
+				glTranslatef(0.0, 0.5*e, 0.0);
+
+				glRotatef(r, 1.0 ,0.0, 0.0);
+
+				glTranslatef(0.0, 0.25, 0.0);
+
+				glPushMatrix();
+
+					glTranslatef(0.0, 1.25, 0.0);
+
+					glScalef(3.0, 2.0, 0.5);
+
+					if(modo == 1){
+						cubito.draw_puntos(0.0, 0.0, 0.0, 3.0);
+					}else if(modo == 2){
+						cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
+					}else if(modo == 3){
+						cubito.draw_solido(1.0, 0.0, 0.0);
+					}else if(modo == 4){
+						cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+					}
+
+				glPopMatrix();
+
+				glPushMatrix();
+
+					glScalef(0.5, 0.5, 0.5);
+
+					if(modo == 1){
+						cubito.draw_puntos(0.0, 0.0, 0.0, 3.0);
+					}else if(modo == 2){
+						cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
+					}else if(modo == 3){
+						cubito.draw_solido(1.0, 0.0, 0.0);
+					}else if(modo == 4){
+						cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+					}
+
+				glPopMatrix();
+
+			glPopMatrix();
+
+			glPushMatrix();
+
+				glScalef(0.25, 1.0*e, 0.25);
+
+				if(modo == 1){
+					cubito.draw_puntos(0.0, 0.0, 0.0, 3.0);
+				}else if(modo == 2){
+					cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
+				}else if(modo == 3){
+					cubito.draw_solido(1.0, 0.0, 0.0);
+				}else if(modo == 4){
+					cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+				}
+
+			glPopMatrix();
+
+		glPopMatrix();
+
+		glPushMatrix();
+
+			glScalef(0.5, 4.0, 0.5);
+
+			if(modo == 1){
+				cubito.draw_puntos(0.0, 0.0, 0.0, 3.0);
+			}else if(modo == 2){
+				cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
+			}else if(modo == 3){
+				cubito.draw_solido(1.0, 0.0, 0.0);
+			}else if(modo == 4){
+				cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+			}
+
+		glPopMatrix();
+
+	glPopMatrix();
 
 }

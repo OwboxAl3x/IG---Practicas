@@ -11,6 +11,8 @@
 #include <GLUT/glut.h>
 #include <ctype.h>
 #include "objetos.h"
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono>         // std::chrono::seconds
 
 // tamaño de los ejes
 //const int AXIS_SIZE=5000;
@@ -26,14 +28,20 @@ GLfloat Window_width,Window_height,Front_plane,Back_plane;
 // variables que determninan la posicion y tamaño de la ventana X
 int UI_window_pos_x=50,UI_window_pos_y=50,UI_window_width=500,UI_window_height=500;
 
-unsigned char tecla='l', figura = '2';
+unsigned char tecla='l', figura = '1';
 
 //Declaracion de objetos
-_cubo cubito = _cubo(5.0);
+_cubo cubito = _cubo(10.0);
 _piramide piramidita = _piramide(5.0, 7.5);
 
 _modeloPly objetito;
 _modeloPlyRevolucion objetitoRev = _modeloPlyRevolucion();
+
+_paloSelfie palito;
+
+float estirado = 1, girado = 0, rotado = 0;
+bool subiendo = true, girando = true, rotando = true, animado = false;
+int velociE = 1, velociG = 5, velociR = 5;
 
 //**************************************************************************
 //
@@ -111,25 +119,38 @@ void draw_objects()
 			if(figura=='1') cubito.draw_puntos(0.0, 0.0, 0.0, 3.0);
 			else if(figura=='2') piramidita.draw_puntos(0.0, 0.0, 0.0, 3.0);
 			else if(figura=='3') objetito.draw_puntos(1.0,0.0,0.0,4.0);
-			else if(figura=='4') objetitoRev.draw_puntos(1.0,0,0,4);
+			else if(figura=='4') objetitoRev.draw_puntos(1.0,0.0,0.0,4.0);
+			else if(figura=='5') palito.pintar(estirado, girado, rotado, 1);
 			break;
 		case 'l':
 			if(figura=='1') cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
 			else if(figura=='2') piramidita.draw_aristas(0.0, 0.0, 0.0, 1.0);
 			else if(figura=='3') objetito.draw_aristas(1.0,0.0,0.0,1.0);
 			else if(figura=='4') objetitoRev.draw_aristas(1.0,0.0,0.0,1.0);
+			else if(figura=='5') palito.pintar(estirado, girado, rotado, 2);
 			break;
 		case 'f':
 			if(figura=='1') cubito.draw_solido(1.0, 0.0, 0.0);
 			else if(figura=='2') piramidita.draw_solido(1.0, 0.0, 0.0);
 			else if(figura=='3') objetito.draw_solido(0.0,1.0,0.0);
 			else if(figura=='4') objetitoRev.draw_solido(0.0,1.0,0.0);
+			else if(figura=='5') palito.pintar(estirado, girado, rotado, 3);
 			break;
 		case 'c':
 			if(figura=='1') cubito.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 			else if(figura=='2')piramidita.draw_solido_ajedrez(1.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 			else if(figura=='3') objetito.draw_solido_ajedrez(1.0,0.0,0.0,0.0,1.0,0.0);
 			else if(figura=='4') objetitoRev.draw_solido_ajedrez(1.0,0.0,0.0,0.0,1.0,0.0);
+			else if(figura=='5') palito.pintar(estirado, girado, rotado, 4);
+			break;
+		case 'B':
+		case 'b':
+		case 'N':
+		case 'n':
+		case 'M':
+		case 'm':
+		case '.':
+			if(figura=='5') palito.pintar(estirado, girado, rotado, 4);
 			break;
 	}
 
@@ -187,12 +208,73 @@ else if (toupper(Tecla1)=='1') figura = '1';
 else if (toupper(Tecla1)=='2') figura = '2';
 else if (toupper(Tecla1)=='3') figura = '3';
 else if (toupper(Tecla1)=='4') figura = '4';
+else if (toupper(Tecla1)=='5') figura = '5';
 else if (toupper(Tecla1)=='P') tecla = 'p';
 else if (toupper(Tecla1)=='L') tecla = 'l';
 else if (toupper(Tecla1)=='F') tecla = 'f';
 else if (toupper(Tecla1)=='C') tecla = 'c';
+else if (Tecla1=='Z'){ if(estirado<5) estirado++; }
+else if (Tecla1=='z'){ if(estirado>1) estirado --; }
+else if (Tecla1=='X'){ if(girado>-90) girado --; }
+else if (Tecla1=='x'){ if(girado<90) girado ++; }
+else if (Tecla1=='Y'){ if(rotado>-90) rotado --; }
+else if (Tecla1=='y'){ if(rotado<90)  rotado++; }
+else if (toupper(Tecla1)=='A') animado = !animado;
+else if (Tecla1=='B') tecla = 'B';
+else if (Tecla1=='b') tecla = 'b';
+else if (Tecla1=='N') tecla = 'N';
+else if (Tecla1=='n') tecla = 'n';
+else if (Tecla1=='M') tecla = 'M';
+else if (Tecla1=='m') tecla = 'm';
 
 glutPostRedisplay();
+}
+
+void anima(){
+
+	if(animado){
+
+		if(tecla == 'B' && velociE<2) velociE++, tecla = '.';
+		else if(tecla == 'b' && velociE>0) velociE--, tecla = '.';
+		else if(tecla=='N' && velociG<10) velociG += 5, tecla = '.';
+		else if(tecla=='n' && velociG>0) velociG -= 5, tecla = '.';
+		else if(tecla=='M' && velociR<10) velociR += 5, tecla = '.';
+		else if(tecla=='m' && velociR>0) velociR -= 5, tecla = '.';
+
+		if(estirado < 6 && subiendo){
+			estirado += velociE;
+			if(estirado >= 6) subiendo = false;
+		}
+		else if(estirado > 1){
+			estirado -= velociE;
+			if(estirado <= 1) subiendo = true;
+		}
+		std::this_thread::sleep_for (std::chrono::milliseconds(50));
+
+		if(girado < 90 && girando){
+			girado = girado + velociG;
+			if(girado >= 90) girando = false;
+		}
+		else if(girado > -90){
+			girado = girado - velociG;
+			if(girado <= -90) girando = true;
+		}
+		std::this_thread::sleep_for (std::chrono::milliseconds(50));
+
+		if(rotado < 90 && rotando){
+			rotado = rotado + velociR;
+			if(rotado >= 90) rotando = false;
+		}
+		else if(rotado > -90){
+			rotado = rotado - velociR;
+			if(rotado <= -90) rotando = true;
+		}
+		std::this_thread::sleep_for (std::chrono::milliseconds(50));
+
+	}
+
+	glutPostRedisplay();
+
 }
 
 //***************************************************************************
@@ -306,7 +388,9 @@ glutKeyboardFunc(normal_keys);
 // asignación de la funcion llamada "tecla_Especial" al evento correspondiente
 glutSpecialFunc(special_keys);
 
-objetito.cargarPly("PLYs/beethoven.ply");
+glutIdleFunc(anima);
+
+objetito.cargarPly("PLYs/big_dodge.ply");
 
 // funcion de inicialización
 initialize();
