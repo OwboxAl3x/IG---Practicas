@@ -43,8 +43,22 @@ class _triangulos3D: public _puntos3D
 		void 	draw_aristas(float r, float g, float b, int grosor);
 		void    draw_solido(float r, float g, float b);
 		void 	draw_solido_ajedrez(float r1, float g1, float b1, float r2, float g2, float b2);
+		void	draw_normales_vertices(float r, float g, float b);
+		void	draw_normales_caras(float r, float g, float b);
+
+		void	normalizarVectorCaras();
+		void	normalizarVectorVertices();
+		void	normalizarVectores();
 
 		vector<_vertex3i> caras;
+		vector<_vertex3f> caras_normalizadas;
+		vector<_vertex3f> vertices_normalizados;
+
+	private:
+
+		void	normalizar(_vertex3f &v);
+		float	productoEscalar(const _vertex3f &a, const _vertex3f &b);
+		_vertex3f	productoVectorial(const _vertex3f &a, const _vertex3f &b);
 
 };
 

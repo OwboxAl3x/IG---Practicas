@@ -143,6 +143,31 @@ void draw_objects()
 			else if(figura=='4') objetitoRev.draw_solido_ajedrez(1.0,0.0,0.0,0.0,1.0,0.0);
 			else if(figura=='5') palito.pintar(estirado, girado, rotado, 4);
 			break;
+		case 'w':
+			if(figura=='1'){ 
+				cubito.draw_aristas(0.0, 0.0, 0.0, 1.0);
+				cubito.normalizarVectores();
+				cubito.draw_normales_caras(0.0, 0.0, 0.0);
+				cubito.draw_normales_vertices(0.0, 0.0, 0.0);
+			}else if(figura=='2'){ 	
+				piramidita.draw_aristas(0.0, 0.0, 0.0, 1.0);
+				piramidita.normalizarVectores();
+				piramidita.draw_normales_caras(0.0, 0.0, 0.0);
+				piramidita.draw_normales_vertices(0.0, 0.0, 0.0);
+			}else if(figura=='3'){ 
+				objetito.draw_aristas(1.0,0.0,0.0,1.0);
+				objetito.normalizarVectores();
+				objetito.draw_normales_caras(0.0, 0.0, 0.0);
+			}else if(figura=='4'){ 
+				objetitoRev.draw_aristas(1.0,0.0,0.0,1.0);
+				objetitoRev.normalizarVectores();
+				objetitoRev.draw_normales_caras(0.0, 0.0, 0.0);
+			}else if(figura=='5'){ 
+				palito.pintar(estirado, girado, rotado, 2);
+				palito.normalizarVectores();
+				palito.draw_normales_caras(0.0, 0.0, 0.0);
+			}
+			break;
 		case 'B':
 		case 'b':
 		case 'N':
@@ -150,7 +175,7 @@ void draw_objects()
 		case 'M':
 		case 'm':
 		case '.':
-			if(figura=='5') palito.pintar(estirado, girado, rotado, 4);
+			if(figura=='5') palito.pintar(estirado, girado, rotado, 2);
 			break;
 	}
 
@@ -213,6 +238,7 @@ else if (toupper(Tecla1)=='P') tecla = 'p';
 else if (toupper(Tecla1)=='L') tecla = 'l';
 else if (toupper(Tecla1)=='F') tecla = 'f';
 else if (toupper(Tecla1)=='C') tecla = 'c';
+else if (toupper(Tecla1)=='W') tecla = 'w';
 else if (Tecla1=='Z'){ if(estirado<5) estirado++; }
 else if (Tecla1=='z'){ if(estirado>1) estirado --; }
 else if (Tecla1=='X'){ if(girado>-90) girado --; }

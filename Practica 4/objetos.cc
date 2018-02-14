@@ -94,6 +94,147 @@ void _triangulos3D::draw_solido_ajedrez(float r1, float g1, float b1, float r2, 
 
 }
 
+float _triangulos3D::productoEscalar(const _vertex3f &a, const _vertex3f &b){
+
+	float res;
+
+	res = (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
+
+	return res;
+
+}
+
+_vertex3f _triangulos3D::productoVectorial(const _vertex3f &a, const _vertex3f &b){
+
+	_vertex3f res;
+
+	res.x = (a.y * b.z - a.z * b.y);
+	res.y = -(a.x * b.z - a.z * b.x);
+	res.x = (a.x * b.y - a.y * b.x);
+
+	return res;
+
+}
+
+void _triangulos3D::normalizar(_vertex3f &v){
+
+	float modulo = sqrt(productoEscalar(v, v));
+
+	v.x = v.x / modulo;
+	v.y = v.y / modulo;
+	v.z = v.z / modulo;
+
+}
+
+void _triangulos3D::draw_normales_caras(float r, float g, float b){
+
+	_vertex3f v1, v2, v3, promedio, aux;
+
+	glColor3f(r, g, b);
+	glShadeModel(GL_FLAT);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glBegin(GL_LINES);
+
+		for(int i=0; i<caras.size(); i++){
+
+			v1 = vertices[caras[i].x];
+			v2 = vertices[caras[i].y];
+			v3 = vertices[caras[i].z];
+
+			promedio.x = (v1.x + v2.x + v3.x) / 3.0;
+			promedio.y = (v1.y + v2.y + v3.y) / 3.0;
+			promedio.z = (v1.z + v2.z + v3.z) / 3.0;
+
+			aux = caras_normalizadas[i] + promedio;
+
+			glVertex3f(promedio.x, promedio.y, promedio.z);
+			glVertex3f(aux.x, aux.y, aux.z);
+
+		}
+
+	glEnd();
+
+}
+
+void _triangulos3D::draw_normales_vertices(float r, float g, float b){
+
+	_vertex3f aux;
+
+	glColor3f(r, g, b);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glBegin(GL_LINES);
+
+		for(int i=0; i<vertices.size(); i++){
+
+			aux = vertices_normalizados[i] + vertices[i];
+
+			glVertex3f(vertices[i].x, vertices[i].y, vertices[i].z);
+			glVertex3f(aux.x, aux.y, aux.z);
+
+		}
+
+	glEnd();
+
+}
+
+void _triangulos3D::normalizarVectorCaras(){
+
+	_vertex3f p, q, tri1, tri2, tri3, res;
+
+	for(int i=0; i<caras.size(); i++){
+
+		tri1 = vertices[caras[i].x];
+		tri2 = vertices[caras[i].y];
+		tri3 = vertices[caras[i].z];
+
+		p.x = (tri2.x - tri1.x);
+		p.y = (tri2.y - tri1.y);
+		p.z = (tri2.z - tri1.z);
+
+		q.x = (tri3.x - tri1.x);
+		q.y = (tri3.y - tri1.y);
+		q.z = (tri3.z - tri1.z);
+
+		res = productoVectorial(p, q);
+
+		normalizar(res);
+
+		caras_normalizadas.push_back(res);
+
+	}
+
+}
+
+void _triangulos3D::normalizarVectorVertices(){
+
+	int tri1, tri2, tri3;
+
+	vertices_normalizados.resize(vertices.size());
+
+	for(int i=0; i<caras.size(); i++){
+
+		tri1=caras[i].x;
+		tri2=caras[i].y;
+		tri3=caras[i].z;
+
+		vertices_normalizados[tri1] = vertices_normalizados[tri1] + caras_normalizadas[i];
+		vertices_normalizados[tri2] = vertices_normalizados[tri2] + caras_normalizadas[i];
+		vertices_normalizados[tri3] = vertices_normalizados[tri3] + caras_normalizadas[i];
+
+	}
+
+	for(int i=0; i<vertices_normalizados.size(); i++)
+		normalizar(vertices_normalizados[i]);
+
+}
+
+void _triangulos3D::normalizarVectores(){
+
+	normalizarVectorCaras();
+	normalizarVectorVertices();
+
+}
+
 
 //*************************************************************************
 // clase cubo
@@ -103,14 +244,14 @@ _cubo::_cubo(float tam){
 
 	_vertex3f v0, v1, v2, v3, v4, v5, v6, v7;
 
-	v0.x = -0.5; v0.y = -0.5; v0.z = tam/2;
-	v1.x = -0.5; v1.y = tam/2; v1.z = tam/2;
+	v0.x = -0.5; v0.y = -0.5; v0.z = -0.5;
+	v1.x = tam/2; v1.y = -0.5; v1.z = -0.5;
 	v2.x = -0.5; v2.y = tam/2; v2.z = -0.5;
-	v3.x = -0.5; v3.y = -0.5; v3.z = -0.5;
-	v4.x = tam/2; v4.y = -0.5; v4.z = -0.5;
-	v5.x = tam/2; v5.y = -0.5; v5.z = tam/2;
-	v6.x = tam/2; v6.y = tam/2; v6.z = tam/2;
-	v7.x = tam/2; v7.y = tam/2; v7.z = -0.5;
+	v3.x = tam/2; v3.y = tam/2; v3.z = -0.5;
+	v4.x = -0.5; v4.y = tam/2; v4.z = tam/2;
+	v5.x = tam/2; v5.y = tam/2; v5.z = tam/2;
+	v6.x = -0.5; v6.y = -0.5; v6.z = tam/2;
+	v7.x = tam/2; v7.y = -0.5; v7.z = tam/2;
 
 	vertices.push_back(v0);
 	vertices.push_back(v1);
@@ -123,18 +264,18 @@ _cubo::_cubo(float tam){
 
 	_vertex3i c0, c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11;
 
-	c0.x = 1; c0.y = 0; c0.z = 3;
-	c1.x = 1; c1.y = 2; c1.z = 3;
-	c2.x = 3; c2.y = 2; c2.z = 4;
-	c3.x = 7; c3.y = 2; c3.z = 4;
-	c4.x = 7; c4.y = 4; c4.z = 5;
-	c5.x = 7; c5.y = 6; c5.z = 5;
-	c6.x = 0; c6.y = 5; c6.z = 6;
-	c7.x = 0; c7.y = 1; c7.z = 6;
-	c8.x = 1; c8.y = 6; c8.z = 7;
-	c9.x = 1; c9.y = 2; c9.z = 7;
-	c10.x = 3; c10.y = 5; c10.z = 4;
-	c11.x = 3; c11.y = 5; c11.z = 0;
+	c0.x = 2; c0.y = 1; c0.z = 0;
+	c1.x = 2; c1.y = 3; c1.z = 1;
+	c2.x = 3; c2.y = 5; c2.z = 1;
+	c3.x = 5; c3.y = 7; c3.z = 1;
+	c4.x = 7; c4.y = 5; c4.z = 6;
+	c5.x = 5; c5.y = 4; c5.z = 6;
+	c6.x = 6; c6.y = 4; c6.z = 0;
+	c7.x = 2; c7.y = 0; c7.z = 4;
+	c8.x = 2; c8.y = 4; c8.z = 5;
+	c9.x = 2; c9.y = 5; c9.z = 3;
+	c10.x = 7; c10.y = 6; c10.z = 0;
+	c11.x = 1; c11.y = 7; c11.z = 0;
 
 	caras.push_back(c0);
 	caras.push_back(c1);
